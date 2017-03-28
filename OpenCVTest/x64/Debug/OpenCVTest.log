@@ -1,3 +1,4 @@
-﻿  Test.cpp
+﻿  ComparisonObjectsByMomentsOfTheirContours.cpp
+d:\testopencv\opencvdetect\opencvtest\comparisonobjectsbymomentsoftheircontours.cpp(55): warning C4101: buf: неиспользованная локальная переменная
   OpenCVTest.vcxproj -> D:\TestOpenCv\OpenCvDetect\x64\Debug\OpenCVTest.exe
   OpenCVTest.vcxproj -> D:\TestOpenCv\OpenCvDetect\x64\Debug\OpenCVTest.pdb (Full PDB)

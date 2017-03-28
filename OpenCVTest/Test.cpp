@@ -4,139 +4,50 @@
 using namespace std;
 using namespace cv;
 
+void FindingObjectAtAngle(IplImage *image, int i);
+void ComparisonObjectsByMomentsOfTheirContours();
+int FindColor();
+void SearchOfFiguresByColor();
 
-IplImage* templ = 0;
-int i = 0;
+//void FindingObjectsWithoutSlope(IplImage *image);
 
-
-void FindPartial(IplImage *image) {
-	// шаблон
-	char* filename2 = "../data/templ.bmp";
-	printf("[i] template: %s\n", filename2);
-
-	templ = cvLoadImage(filename2, 1);
-	assert(templ != 0);
-
-	//cvNamedWindow("origianl", CV_WINDOW_AUTOSIZE);
-	//cvNamedWindow("template", CV_WINDOW_AUTOSIZE);
-	cvNamedWindow("Match", CV_WINDOW_AUTOSIZE);
-	
-	//cvNamedWindow("res", CV_WINDOW_AUTOSIZE);
-
-	// размер шаблона
-	int width = templ->width;
-	int height = templ->height;
-
-	// оригинал и шаблон
-	//cvShowImage("origianl", image);
-	//cvShowImage("template", templ);
-
-	// изображение дл€ хранени€ результата сравнени€
-	// размер результата: если image WxH и templ wxh, то result = (W-w+1)x(H-h+1)
-	IplImage *res = cvCreateImage(cvSize((image->width - templ->width + 1), (image->height - templ->height + 1)), IPL_DEPTH_32F, 1);
-
-	// сравнение изображени€ с шаблоном
-	cvMatchTemplate(image, templ, res, CV_TM_SQDIFF);
-
-	// покажем что получили
-	//cvShowImage("res", res);
-
-	// определение лучшее положение дл€ сравнени€
-	// (поиск минимумов и максимумов на изображении)
-	double    minval, maxval;
-	CvPoint    minloc, maxloc;
-	cvMinMaxLoc(res, &minval, &maxval, &minloc, &maxloc, 0);
-
-	// нормализуем
-	/*cvNormalize(res, res, 1, 0, CV_MINMAX);
-	cvNamedWindow("res norm", CV_WINDOW_AUTOSIZE);*/
-	//cvShowImage("res norm", res);
-
-	// выделим область пр€моугольником
-	cvRectangle(image, cvPoint(minloc.x, minloc.y), cvPoint(minloc.x + templ->width - 1, minloc.y + templ->height - 1), CV_RGB(255, 0, 0), 1, 8);
-
-	// показываем изображение
-	//cvShowImage("Match", image);
-	char* tmp;
-	char buffer[20];
-	tmp=	_itoa(i, buffer,10);
-	strcat(tmp,"Match.jpg");
-	cvSaveImage(tmp, image);
-	i++;
-	//counter++;
-
-	// ждЄм нажати€ клавиши
-	//cvWaitKey(0);
-
-	// освобождаем ресурсы
-	//cvReleaseImage(&image);
-	cvReleaseImage(&templ);
-	cvReleaseImage(&res);
-	cvDestroyAllWindows();
-
-}
 
 
 int main(int argc, char* argv[])
 {
+	SearchOfFiguresByColor();
+	ComparisonObjectsByMomentsOfTheirContours();
+	//ComparisonObjectsByMomentsOfTheirContours();
+	
+	//VideoCapture cap(0);
 
-	VideoCapture cap(0);
+	////-- ¬ыставл€ем параметры камеры ширину и высоту кадра в пиксел€х
+	//cap.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+	//cap.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
 
+	//Mat frame;
+	//int counter = 0;
+	//int i = 0;
+	//char filename[512];
+	//while (true) {
+	//	cap >> frame; //-- захватываем очередной кадр
 
-	//-- ¬ыставл€ем параметры камеры ширину и высоту кадра в пиксел€х
-	cap.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
+	//	imshow("Video", frame); //-- показываем его
+	//	char c = cvWaitKey(33); //-- если была нажата клавиша, узнаЄм еЄ код
 
-	Mat frame;
-	int counter = 0;
-	int i=0;
-	char filename[512];
-	while (true) {
-		cap >> frame; //-- захватываем очередной кадр
+	//	if (i == 30) {
+	//		sprintf(filename, "Image%d.jpg", counter);
+	//		printf("[i] capture... %s\n", filename);
+	//		IplImage* image2 = cvCloneImage(&(IplImage)frame);
 
-		imshow("Video", frame); //-- показываем его
-		char c = cvWaitKey(33); //-- если была нажата клавиша, узнаЄм еЄ код
-		//for (int j=0; j < 10; j++);
-		
-		if (i == 50) {
-			sprintf(filename, "Image%d.jpg", counter);
-				printf("[i] capture... %s\n", filename);
-				IplImage* image2 = cvCloneImage(&(IplImage)frame);
-				//cvSaveImage(filename, image2);
+	//		
+	//		FindingObjectAtAngle(image2, counter);
+	//		counter++;
+	//		i = 0;
+	//	}
+	//	i++;
+	//}
 
-				counter++;
-				/*cvNamedWindow("origianl", CV_WINDOW_AUTOSIZE);
-				cvShowImage("origianl", image2);*/
-
-
-				FindPartial(image2);
-				i = 0;
-		}
-		i++;
-
-		//char c = cvWaitKey(33); //-- если была нажата клавиша, узнаЄм еЄ код
-
-		//if (c == 27) { //-- нажата ESC, прерываем цикл
-		//	break;
-		//}
-		//else if (c == 13) { // Enter
-		//					// сохран€ем кадр в файл
-
-
-		//	sprintf(filename, "Image%d.jpg", counter);
-		//	printf("[i] capture... %s\n", filename);
-		//	IplImage* image2 = cvCloneImage(&(IplImage)frame);
-		//	//cvSaveImage(filename, image2);
-
-		//	counter++;
-		//	/*cvNamedWindow("origianl", CV_WINDOW_AUTOSIZE);
-		//	cvShowImage("origianl", image2);*/
-
-
-		//	FindPartial(image2);
-		//}
-
-	}
 
 
 	return 0;

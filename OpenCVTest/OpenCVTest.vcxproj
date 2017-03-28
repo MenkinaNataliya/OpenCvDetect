@@ -149,6 +149,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComparisonObjectsByMomentsOfTheirContours.cpp" />
+    <ClCompile Include="FindingObjectAtAngle.cpp" />
+    <ClCompile Include="FindingObjectsWithoutSlope.cpp" />
+    <ClCompile Include="FindColor.cpp" />
+    <ClCompile Include="SearchOfFiguresByColor.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
